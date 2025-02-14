@@ -177,6 +177,7 @@
       navigator.mediaDevices
         .getUserMedia({
           video: {
+            facingMode: "user",
             width: { ideal: 1280 },
             height: { ideal: 720 },
           },
@@ -225,12 +226,35 @@
       }
 
       function capturePhoto() {
+        const isMobile = /Mobi|Android/i.test(navigator.userAgent);
         const canvas = document.createElement("canvas");
-        canvas.width = 1280; // Set canvas width
-        canvas.height = 720; // Set canvas height
         const context = canvas.getContext("2d");
-        context.drawImage(camera, 0, 0, canvas.width, canvas.height);
-        const imageData = canvas.toDataURL("image/jpeg", 0.9); // High-quality JPEG
+
+        // Set dimensions based on device type
+        if (isMobile) {
+          // Square crop for mobile (adjust values as needed)
+          canvas.width = 720;
+          canvas.height = 720;
+          // Draw centered square crop from video feed
+          context.drawImage(
+            camera,
+            (camera.videoWidth - 720) / 2, // Source X
+            0,                             // Source Y
+            720,                           // Source width
+            720,                           // Source height
+            0,                              // Destination X
+            0,                              // Destination Y
+            720,                            // Destination width
+            720                             // Destination height
+          );
+        } else {
+          // Full frame for desktop
+          canvas.width = 1280;
+          canvas.height = 720;
+          context.drawImage(camera, 0, 0, canvas.width, canvas.height);
+        }
+
+        const imageData = canvas.toDataURL("image/jpeg", 0.9);
         images.push(imageData);
 
         // Display the image instantly
