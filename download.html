@@ -177,21 +177,21 @@
             if (index === images.length - 1) {
               // Add "happy bembang day!" text
               ctx.fillStyle = "black";
-              ctx.font = "bold 18px Roboto, sans-serif";
+              ctx.font = "bold 20px Roboto, sans-serif"; // Adjusted font size
               ctx.textAlign = "center";
               ctx.fillText(
                 "MUKHA SA NAKA BEMBANG",
                 canvas.width / 2,
-                canvas.height - textHeight + 25 // Adjusted for better vertical spacing
+                canvas.height - textHeight + 16 // Adjusted for better vertical spacing
               );
 
               // Add date below the text
-              ctx.font = "14px Arial, Roboto, sans-serif";
+              ctx.font = "14px Arial, Roboto, sans-serif"; // Adjusted font size
               let date = new Date().toLocaleDateString();
               ctx.fillText(
                 date,
                 canvas.width / 2,
-                canvas.height - 25 // Adjusted for better vertical spacing
+                canvas.height - 18 // Adjusted for better vertical spacing
               );
 
               // Download the final photobooth strip
