@@ -226,10 +226,15 @@
 
       function capturePhoto() {
         const canvas = document.createElement("canvas");
-        canvas.width = 1280; // Set canvas width
-        canvas.height = 720; // Set canvas height
+        canvas.width = 1280; 
+        canvas.height = 720;
         const context = canvas.getContext("2d");
+
+        // Mirror the image correctly
+        context.translate(canvas.width, 0);
+        context.scale(-1, 1); // Flip horizontally
         context.drawImage(camera, 0, 0, canvas.width, canvas.height);
+
         const imageData = canvas.toDataURL("image/jpeg", 0.9); // High-quality JPEG
         images.push(imageData);
 
