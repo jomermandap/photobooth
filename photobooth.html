@@ -21,7 +21,7 @@
       }
 
       body {
-        background-color: #faf3e0;
+        background-color: rgb(255, 241, 241)3e0;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -66,18 +66,6 @@
         border-radius: 8px;
       }
 
-      #countdown {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: clamp(2rem, 5vw, 4rem);
-        color: white;
-        background: rgba(0, 0, 0, 0.6);
-        padding: 20px;
-        border-radius: 10px;
-      }
-
       .buttons {
         display: flex;
         gap: 10px;
@@ -113,7 +101,7 @@
 
       /* Flash Effect */
       .flash {
-        position: absolute;
+        position: fixed;
         top: 0;
         left: 0;
         width: 100%;
@@ -140,6 +128,31 @@
       #doneBtn:hover {
         background-color: #e65a5a;
       }
+
+      /* Progress Counter Style */
+      #progressCounter {
+        font-size: 1.5rem; /* Increase font size */
+        font-weight: bold; /* Make it bold */
+        color: #4caf50; /* Change text color to match button */
+        text-align: center; /* Center the text */
+        margin: 10px 0; /* Add some margin */
+        background-color: rgba(255, 255, 255, 0.8); /* Light background for contrast */
+        padding: 10px; /* Add padding */
+        border-radius: 5px; /* Rounded corners */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+      }
+
+      /* Timer Style */
+      #timer {
+        position: absolute; /* Position it absolutely within the camera container */
+        top: 50%; /* Center vertically */
+        left: 50%; /* Center horizontally */
+        transform: translate(-50%, -50%); /* Adjust for element's own size */
+        font-size: 3rem; /* Large font size for visibility */
+        color: rgb(255, 255, 255); /* Color for the timer */
+        font-weight: bold; /* Make it bold */
+        z-index: 15; /* Ensure it appears above other elements */
+      }
     </style>
   </head>
   <body>
@@ -150,7 +163,8 @@
         <div class="flash" id="flash"></div>
         <video id="camera" autoplay></video>
         <canvas id="canvas" style="display: none"></canvas>
-        <p id="countdown"></p>
+        <p id="progressCounter">0/3</p>
+        <p id="timer" style="display: none;">0</p>
         <div class="buttons">
           <button id="startCountdown" style="display: block; z-index: 1">
             Start Countdown
@@ -164,16 +178,17 @@
     </div>
 
     <script>
-      let countdown = document.getElementById("countdown");
+      let progressCounter = document.getElementById("progressCounter");
       let camera = document.getElementById("camera");
       let canvas = document.getElementById("canvas");
       let ctx = canvas.getContext("2d");
       let photoStrip = document.getElementById("photoStrip");
       let doneBtn = document.getElementById("doneBtn");
       let flash = document.getElementById("flash");
+      let timer = document.getElementById("timer");
 
       let images = [];
-      let count = 3;
+      let shotsTaken = 0;
 
       // Access camera
       navigator.mediaDevices
@@ -193,26 +208,38 @@
           images = [];
           photoStrip.innerHTML = ""; // Clear previous images
           doneBtn.style.display = "none"; // Hide "Done" initially
-          let shotsTaken = 0;
-          countdown.style.display = "block"; // Show countdown in center
+          shotsTaken = 0; // Reset shots taken
+          progressCounter.style.display = "block"; // Show progress counter
+          timer.style.display = "none"; // Hide timer initially
 
           function captureNextShot() {
             if (shotsTaken < 3) {
-              countdown.innerText = count - shotsTaken; // Countdown (3 → 2 → 1)
+              progressCounter.innerText = `${shotsTaken + 1}/3`; // Update progress counter
 
-              setTimeout(() => {
-                flashEffect();
-                capturePhoto();
-                shotsTaken++;
+              // Start 3-second countdown before capturing
+              let countdown = 3; // Set initial countdown value
+              timer.style.display = "block"; // Show timer
+              timer.innerText = countdown; // Display initial countdown
 
-                if (shotsTaken < 3) {
-                  setTimeout(captureNextShot, 2000); // Wait 3 sec before next capture
-                } else {
-                  countdown.innerText = "3/3";
-                  setTimeout(() => (countdown.style.display = "none"), 500);
-                  doneBtn.style.display = "block"; // Show "Done" button
+              const countdownInterval = setInterval(() => {
+                countdown--;
+                timer.innerText = countdown; // Update timer display
+                if (countdown <= 0) {
+                  clearInterval(countdownInterval); // Stop the countdown
+                  timer.style.display = "none"; // Hide timer
+                  flashEffect(); // Trigger flash effect
+                  capturePhoto(); // Capture the photo
+                  shotsTaken++;
+
+                  if (shotsTaken < 3) {
+                    setTimeout(captureNextShot, 2000); // Wait 2 sec before next capture
+                  } else {
+                    progressCounter.innerText = "3/3"; // Final update
+                    setTimeout(() => (progressCounter.style.display = "none"), 500);
+                    doneBtn.style.display = "block"; // Show "Done" button
+                  }
                 }
-              }, 1000);
+              }, 1000); // Update every second
             }
           }
 

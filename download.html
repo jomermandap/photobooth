@@ -145,11 +145,11 @@
         let canvas = document.createElement("canvas");
         let ctx = canvas.getContext("2d");
 
-        let imgWidth = 1280; // Image width
-        let imgHeight = 720;
-        let padding = 50; // Padding around each image
-        let outerPadding = 80; // Padding around the entire strip
-        let textHeight = 200; // More space for text at the bottom
+        let imgWidth = 640; // Reduced image width from 1280 to 640
+        let imgHeight = 360; // Reduced image height from 720 to 360
+        let padding = 25; // Reduced padding around each image from 50 to 25
+        let outerPadding = 40; // Reduced padding around the entire strip from 80 to 40
+        let textHeight = 100; // Reduced space for text at the bottom from 200 to 100
         let totalHeight =
           imgHeight * images.length +
           padding * (images.length - 1) +
@@ -175,20 +175,24 @@
             ctx.drawImage(img, xPos, yPos, imgWidth, imgHeight);
 
             if (index === images.length - 1) {
-              // Add "photobooth" text
+              // Add "happy bembang day!" text
               ctx.fillStyle = "black";
-              ctx.font = "bold 80px Roboto, sans-serif";
+              ctx.font = "bold 30px Roboto, sans-serif";
               ctx.textAlign = "center";
               ctx.fillText(
-                "happy bembang day!",
+                "MUKHA SA NAKA BEMBANG",
                 canvas.width / 2,
-                canvas.height - textHeight + 50
+                canvas.height - textHeight + 30 // Adjusted for better vertical spacing
               );
 
               // Add date below the text
-              ctx.font = "60px Arial, Roboto, sans-serif";
+              ctx.font = "20px Arial, Roboto, sans-serif";
               let date = new Date().toLocaleDateString();
-              ctx.fillText(date, canvas.width / 2, canvas.height - 60);
+              ctx.fillText(
+                date,
+                canvas.width / 2,
+                canvas.height - 35 // Adjusted for better vertical spacing
+              );
 
               // Download the final photobooth strip
               let link = document.createElement("a");
