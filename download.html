@@ -145,11 +145,11 @@
         let canvas = document.createElement("canvas");
         let ctx = canvas.getContext("2d");
 
-        let imgWidth = 640; // Reduced image width from 1280 to 640
-        let imgHeight = 360; // Reduced image height from 720 to 360
-        let padding = 25; // Reduced padding around each image from 50 to 25
-        let outerPadding = 40; // Reduced padding around the entire strip from 80 to 40
-        let textHeight = 100; // Reduced space for text at the bottom from 200 to 100
+        let imgWidth = 480; // Further reduced image width
+        let imgHeight = 270; // Further reduced image height
+        let padding = 15; // Further reduced padding around each image
+        let outerPadding = 20; // Further reduced padding around the entire strip
+        let textHeight = 70; // Further reduced space for text at the bottom
         let totalHeight =
           imgHeight * images.length +
           padding * (images.length - 1) +
@@ -177,21 +177,21 @@
             if (index === images.length - 1) {
               // Add "happy bembang day!" text
               ctx.fillStyle = "black";
-              ctx.font = "bold 30px Roboto, sans-serif";
+              ctx.font = "bold 18px Roboto, sans-serif";
               ctx.textAlign = "center";
               ctx.fillText(
                 "MUKHA SA NAKA BEMBANG",
                 canvas.width / 2,
-                canvas.height - textHeight + 30 // Adjusted for better vertical spacing
+                canvas.height - textHeight + 25 // Adjusted for better vertical spacing
               );
 
               // Add date below the text
-              ctx.font = "20px Arial, Roboto, sans-serif";
+              ctx.font = "14px Arial, Roboto, sans-serif";
               let date = new Date().toLocaleDateString();
               ctx.fillText(
                 date,
                 canvas.width / 2,
-                canvas.height - 35 // Adjusted for better vertical spacing
+                canvas.height - 25 // Adjusted for better vertical spacing
               );
 
               // Download the final photobooth strip
