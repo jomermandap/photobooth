@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Photobooth</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cute+Font&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      body {
+        font-family: "Arial", sans-serif;
+        text-align: center;
+        background: #fff;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        overflow-x: hidden;
+        position: relative;
+      }
+      .background-effect {
+        position: absolute;
+        width: 100%;
+        max-width: 800px;
+        height: 70vh;
+        background: radial-gradient(circle, #ffb1a3 10%, transparent 60%);
+        border-radius: 50%;
+        z-index: -1;
+      }
+      .title {
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: bold;
+      }
+      .subtitle {
+        font-size: clamp(0.875rem, 2vw, 1rem);
+        margin: 1rem;
+        padding: 0 1rem;
+        color: #666;
+      }
+      .start-btn {
+        margin-top: 20px;
+        padding: 10px 25px;
+        font-size: clamp(0.875rem, 2vw, 1rem);
+        border: 2px solid #333;
+        border-radius: 25px;
+        background: transparent;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .start-btn:hover {
+        background: #333;
+        color: white;
+      }
+      nav {
+        position: absolute;
+        top: 20px;
+        display: flex;
+        gap: 20px;
+        width: 100%;
+        justify-content: center;
+        padding: 0 1rem;
+      }
+      nav a {
+        text-decoration: none;
+        color: black;
+        font-size: clamp(0.875rem, 2vw, 1rem);
+        transition: color 0.3s;
+      }
+      nav a:hover {
+        color: #ff5733;
+      }
+      .footer {
+        position: absolute;
+        bottom: 20px;
+        font-size: clamp(0.75rem, 1.5vw, 0.8rem);
+        color: #666;
+      }
+      @media (max-width: 480px) {
+        .background-effect {
+          height: 50vh;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="index.html">home</a>
+      <a href="#">-`♡´-</a>
+    </nav>
+    <div class="background-effect"></div>
+    <div>
+      <p style="font-size: 0.8rem">EST</p>
+      <div class="title">photobooth</div>
+      <p style="font-size: 0.8rem">2025</p>
+      <div class="subtitle">
+        Capture the moment, cherish the magic, relive the love
+      </div>
+      <button
+        class="start-btn"
+        onclick="window.location.href='instructions.html'"
+      >
+        START
+      </button>
+    </div>
+    <div class="footer">made by <span style="color: #d99">nyomer :p</span></div>
+  </body>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Photobooth</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* General Styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Roboto", sans-serif;
+      }
+
+      body {
+        background-color: #faf3e0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 1rem;
+      }
+
+      .wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        width: 100%;
+        max-width: 1200px;
+      }
+
+      .camera-container {
+        position: relative;
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      video {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+      }
+
+      .photo-strip {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px;
+        width: 100%;
+      }
+
+      .photo {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+      }
+
+      #countdown {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: clamp(2rem, 5vw, 4rem);
+        color: white;
+        background: rgba(0, 0, 0, 0.6);
+        padding: 20px;
+        border-radius: 10px;
+      }
+
+      .buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 10px 20px;
+        font-size: clamp(0.875rem, 2vw, 1rem);
+        border-radius: 8px;
+        cursor: pointer;
+        border: none;
+        background: #4caf50;
+        color: white;
+        min-width: 120px;
+      }
+
+      @media (max-width: 600px) {
+        .wrapper {
+          gap: 10px;
+        }
+
+        .buttons {
+          flex-direction: column;
+          width: 100%;
+        }
+
+        button {
+          width: 100%;
+        }
+      }
+
+      /* Flash Effect */
+      .flash {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: white;
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
+      }
+
+      /* Photo Strip */
+      .photo-strip img {
+        width: 120px;
+        height: auto;
+        border-radius: 5px;
+        border: 2px solid #ddd;
+      }
+
+      /* Done Button */
+      #doneBtn {
+        display: none;
+        background-color: #ff6b6b;
+      }
+
+      #doneBtn:hover {
+        background-color: #e65a5a;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <!-- Left: Camera & Video -->
+      <div class="camera-container">
+        <h2>📸 Photobooth</h2>
+        <div class="flash" id="flash"></div>
+        <video id="camera" autoplay></video>
+        <canvas id="canvas" style="display: none"></canvas>
+        <p id="countdown"></p>
+        <div class="buttons">
+          <button id="startCountdown" style="display: block; z-index: 1">
+            Start Countdown
+          </button>
+          <button id="doneBtn" style="display: block; z-index: 1">Done</button>
+        </div>
+      </div>
+
+      <!-- Right: Captured Photos -->
+      <div class="photo-strip" id="photoStrip"></div>
+    </div>
+
+    <script>
+      let countdown = document.getElementById("countdown");
+      let camera = document.getElementById("camera");
+      let canvas = document.getElementById("canvas");
+      let ctx = canvas.getContext("2d");
+      let photoStrip = document.getElementById("photoStrip");
+      let doneBtn = document.getElementById("doneBtn");
+      let flash = document.getElementById("flash");
+
+      let images = [];
+      let count = 3;
+
+      // Access camera
+      navigator.mediaDevices
+        .getUserMedia({
+          video: {
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+          },
+        })
+        .then((stream) => {
+          camera.srcObject = stream;
+        });
+
+      document
+        .getElementById("startCountdown")
+        .addEventListener("click", function () {
+          images = [];
+          photoStrip.innerHTML = ""; // Clear previous images
+          doneBtn.style.display = "none"; // Hide "Done" initially
+          let shotsTaken = 0;
+          countdown.style.display = "block"; // Show countdown in center
+
+          function captureNextShot() {
+            if (shotsTaken < 3) {
+              countdown.innerText = count - shotsTaken; // Countdown (3 → 2 → 1)
+
+              setTimeout(() => {
+                flashEffect();
+                capturePhoto();
+                shotsTaken++;
+
+                if (shotsTaken < 3) {
+                  setTimeout(captureNextShot, 2000); // Wait 3 sec before next capture
+                } else {
+                  countdown.innerText = "3/3";
+                  setTimeout(() => (countdown.style.display = "none"), 500);
+                  doneBtn.style.display = "block"; // Show "Done" button
+                }
+              }, 1000);
+            }
+          }
+
+          captureNextShot();
+        });
+
+      function flashEffect() {
+        flash.style.opacity = "1";
+        setTimeout(() => {
+          flash.style.opacity = "0";
+        }, 200);
+      }
+
+      function capturePhoto() {
+        const canvas = document.createElement("canvas");
+        canvas.width = 1280; // Set canvas width
+        canvas.height = 720; // Set canvas height
+        const context = canvas.getContext("2d");
+        context.drawImage(camera, 0, 0, canvas.width, canvas.height);
+        const imageData = canvas.toDataURL("image/jpeg", 0.9); // High-quality JPEG
+        images.push(imageData);
+
+        // Display the image instantly
+        let img = document.createElement("img");
+        img.src = imageData;
+        photoStrip.appendChild(img);
+      }
+
+      document.getElementById("doneBtn").addEventListener("click", function () {
+        // Save captured images in local storage to use on download page
+        localStorage.setItem("capturedPhotos", JSON.stringify(images));
+
+        // Redirect to the download page
+        window.location.href = "download.html";
+      });
+    </script>
+  </body>
+</html>

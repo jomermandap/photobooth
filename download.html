@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Download Your Photos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* General Styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Roboto", sans-serif;
+      }
+
+      body {
+        background-color: #faf3e0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        text-align: center;
+      }
+
+      /* Main Container */
+      .container {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+        max-width: 500px;
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 15px;
+      }
+
+      p {
+        font-size: 14px;
+        color: #444;
+        margin-bottom: 15px;
+      }
+
+      /* Photo Strip Preview */
+      .photo-strip {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border: 2px solid #ddd;
+        padding: 10px;
+        border-radius: 8px;
+        background: white;
+        width: 180px;
+        margin: 0 auto 20px;
+      }
+
+      .photo-strip img {
+        width: 160px;
+        height: auto;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        margin-bottom: 5px;
+      }
+
+      /* Buttons */
+      .buttons {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 10px;
+      }
+
+      button {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      button:hover {
+        background-color: #3e8e41;
+      }
+
+      .download {
+        background-color: #ff6b6b;
+      }
+
+      .download:hover {
+        background-color: #e65a5a;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Your Photos Are Ready!</h1>
+      <p>
+        Your three snapshots are captured—no retakes, just real, fun memories.
+        <br />
+        Now, it's time to save and share your moments.
+      </p>
+
+      <!-- Photo Strip Preview -->
+      <div class="photo-strip" id="photoStrip"></div>
+
+      <!-- Buttons -->
+      <div class="buttons">
+        <button onclick="goHome()">HOME</button>
+        <button class="download" onclick="downloadPhotoStrip()">
+          DOWNLOAD
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // Load captured images from local storage
+      const images = JSON.parse(localStorage.getItem("capturedPhotos")) || [];
+      const photoStrip = document.getElementById("photoStrip");
+
+      // Display images in strip format
+      if (images.length === 3) {
+        images.forEach((imgSrc) => {
+          let img = document.createElement("img");
+          img.src = imgSrc;
+          photoStrip.appendChild(img);
+        });
+      }
+
+      // Function to download the photo strip
+      function downloadPhotoStrip() {
+        let canvas = document.createElement("canvas");
+        let ctx = canvas.getContext("2d");
+
+        let imgWidth = 1280; // Image width
+        let imgHeight = 720;
+        let padding = 50; // Padding around each image
+        let outerPadding = 80; // Padding around the entire strip
+        let textHeight = 200; // More space for text at the bottom
+        let totalHeight =
+          imgHeight * images.length +
+          padding * (images.length - 1) +
+          textHeight +
+          outerPadding * 2;
+
+        // Set final canvas size with padding
+        canvas.width = imgWidth + outerPadding * 2;
+        canvas.height = totalHeight;
+
+        // Set background color to white
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        images.forEach((imgSrc, index) => {
+          let img = new Image();
+          img.src = imgSrc;
+          img.onload = function () {
+            let xPos = outerPadding;
+            let yPos = outerPadding + index * (imgHeight + padding);
+
+            // Draw each image with proper spacing
+            ctx.drawImage(img, xPos, yPos, imgWidth, imgHeight);
+
+            if (index === images.length - 1) {
+              // Add "photobooth" text
+              ctx.fillStyle = "black";
+              ctx.font = "bold 80px Roboto, sans-serif";
+              ctx.textAlign = "center";
+              ctx.fillText(
+                "happy bembang day!",
+                canvas.width / 2,
+                canvas.height - textHeight + 50
+              );
+
+              // Add date below the text
+              ctx.font = "60px Arial, Roboto, sans-serif";
+              let date = new Date().toLocaleDateString();
+              ctx.fillText(date, canvas.width / 2, canvas.height - 60);
+
+              // Download the final photobooth strip
+              let link = document.createElement("a");
+              link.href = canvas.toDataURL("image/png");
+              link.download = "photobooth-strip.png";
+              link.click();
+            }
+          };
+        });
+      }
+
+      // Function to go back to the home page
+      function goHome() {
+        localStorage.removeItem("capturedPhotos");
+        window.location.href = "index.html";
+      }
+    </script>
+  </body>
+</html>
